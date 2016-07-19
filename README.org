@@ -1,0 +1,17 @@
+#+STARTUP: showeverything
+
+My dot files ! Configuration of tools that I use.
+
+Whenever possible the installation scripts create symlinks. So the
+basic installation should be to clone this repository somewhere in
+your home dir, and install things you want. Then use git to keep the
+conf in sync.
+
+* Terminal
+
+  - [[file:pretzo/][pretzo]]
+  - [[file:xterm/][xterm]]
+
+* Window manager
+
+  -  [[file:stumpwm/][stumpwm]]

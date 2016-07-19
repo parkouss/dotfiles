@@ -1,0 +1,20 @@
+#+STARTUP: showeverything
+
+* pretzo
+
+Configure the zsh shell with pretzo.
+
+** Prerequisites
+
+   - the zsh shell:
+#+BEGIN_SRC bash
+sudo pacman -S zsh
+#+END_SRC
+   - don't forget to set it the default shell, e.g:
+#+BEGIN_SRC bash
+chsh -s /usr/bin/zsh
+#+END_SRC
+
+** installation
+
+   Run the *install.sh* script.

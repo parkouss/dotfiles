@@ -1,0 +1,16 @@
+#+STARTUP: showeverything
+
+* Xterm
+
+Configure xterm.
+
+** Prerequisites
+
+   - install xterm and the terminus font:
+#+BEGIN_SRC bash
+sudo pacman -S xterm terminus-font
+#+END_SRC
+
+** installation
+
+   Run the *install.sh* script.
