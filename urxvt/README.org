@@ -1,14 +1,14 @@
 #+STARTUP: showeverything
 
-* Xterm
+* Urxvt
 
-Configure xterm.
+Configure urxvt.
 
 ** Prerequisites
 
-   - install xterm and the terminus font:
+   - install urxvt, xsel and the terminus font:
 #+BEGIN_SRC bash
-sudo pacman -S xterm terminus-font
+sudo pacman -S xterm xsel terminus-font
 #+END_SRC
 
 ** installation

@@ -25,8 +25,8 @@
 (define-key *root-map* (kbd "t") "emacs-terminal")
 
 (defcommand terminal () ()
-  "run xterm"
-  (run-or-raise "exec uxterm" '(:class "XTerm")))
+  "run urxvt"
+  (run-or-raise "exec urxvt" '(:class "URxvt")))
 (define-key *root-map* (kbd "T") "terminal")
 
 (defcommand conkeror () ()

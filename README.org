@@ -10,7 +10,7 @@ conf in sync.
 * Terminal
 
   - [[file:pretzo/][pretzo]]
-  - [[file:xterm/][xterm]]
+  - [[file:urxvt/][urxvt]]
 
 * Window manager
 
