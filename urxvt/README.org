@@ -8,7 +8,7 @@ Configure urxvt.
 
    - install urxvt, xsel and the terminus font:
 #+BEGIN_SRC bash
-sudo pacman -S xterm xsel terminus-font
+sudo pacman -S urxvt xsel terminus-font
 #+END_SRC
 
 ** installation
