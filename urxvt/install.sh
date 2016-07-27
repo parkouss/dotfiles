@@ -2,10 +2,9 @@
 
 BASEDIR=$(dirname `readlink -f "$0"`)
 
-echo "Configuring urxvt..."
+echo "Configuring urxvt and tmux..."
 
 ln -s $BASEDIR/.Xresources ~/.Xresources
-mkdir -p ~/.urxvt/ext
-ln -s $BASEDIR/.urxvt/ext/clipboard ~/.urxvt/ext/clipboard
+ln -s $BASEDIR/.tmux.conf ~/.tmux.conf
 
 xrdb -merge ~/.Xresources

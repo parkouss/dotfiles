@@ -2,13 +2,13 @@
 
 * Urxvt
 
-Configure urxvt.
+Configure urxvt and tmux.
 
 ** Prerequisites
 
-   - install urxvt, xsel and the terminus font:
+   - install urxvt, xsel, the terminus font and tmux:
 #+BEGIN_SRC bash
-sudo pacman -S urxvt xsel terminus-font
+sudo pacman -S urxvt xsel terminus-font tmux
 #+END_SRC
 
 ** installation
