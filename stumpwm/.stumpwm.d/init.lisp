@@ -26,7 +26,8 @@
 
 (defcommand terminal () ()
   "run urxvt"
-  (run-or-raise "exec urxvt" '(:class "URxvt")))
+  (run-or-raise "exec urxvtc -e tmux attach-session"
+                '(:class "URxvt")))
 (define-key *root-map* (kbd "T") "terminal")
 
 (defcommand conkeror () ()

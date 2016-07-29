@@ -1,0 +1,11 @@
+# this file was copied from the dotfiles project
+# please edit the original file to keep things in sync!
+
+[Unit]
+Description=URxvt Daemon Service
+
+[Service]
+ExecStart=/usr/bin/urxvtd -q -o
+
+[Install]
+WantedBy=default.target

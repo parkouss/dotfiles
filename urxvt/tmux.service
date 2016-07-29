@@ -1,0 +1,14 @@
+# this file was copied from the dotfiles project
+# please edit the original file to keep things in sync!
+
+[Unit]
+Description=Start tmux in detached session
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/tmux new-session -s %u -d
+ExecStop=/usr/bin/tmux kill-session -t %u
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
