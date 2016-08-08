@@ -74,3 +74,8 @@
 (let ((swank-loader-files (directory "~/.emacs.d/melpa/slime-*/start-swank.lisp")))
   (if swank-loader-files
       (load (car swank-loader-files))))
+
+(let ((custom-file (merge-pathnames #p".stumpwm.d/custom.lisp"
+                                    (user-homedir-pathname))))
+  (if (probe-file custom-file)
+      (load custom-file)))
