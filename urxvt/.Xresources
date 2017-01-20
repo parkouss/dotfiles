@@ -23,6 +23,7 @@ URxvt.color15: rgb:fc/fc/fc
 URxvt.colorBD: rgb:fc/fc/fc
 urxvt*font: xft:DejaVu Sans Mono:size=12
 URxvt.scrollBar: false
+URxvt.letterSpace: -1
 !URxvt.visualBell: true
 URxvt.fading: 15
 
