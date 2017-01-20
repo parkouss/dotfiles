@@ -9,6 +9,7 @@ Type=forking
 ExecStart=/usr/bin/tmux new-session -s %u -d
 ExecStop=/usr/bin/tmux kill-session -t %u
 RemainAfterExit=yes
+Environment=DISPLAY=:0.0
 
 [Install]
 WantedBy=default.target
