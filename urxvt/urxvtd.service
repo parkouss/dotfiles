@@ -3,6 +3,7 @@
 
 [Unit]
 Description=URxvt Daemon Service
+After=tmux.target
 
 [Service]
 ExecStart=/usr/bin/urxvtd -q
