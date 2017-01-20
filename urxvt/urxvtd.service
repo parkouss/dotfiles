@@ -7,6 +7,7 @@ After=tmux.target
 
 [Service]
 ExecStart=/usr/bin/urxvtd -q
+Restart=always
 
 [Install]
 WantedBy=default.target
