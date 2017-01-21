@@ -1,0 +1,17 @@
+# this file was copied from the dotfiles project
+# please edit the original file to keep things in sync!
+
+[Unit]
+Description=Emacs: the extensible, self-documenting text editor
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/emacs --daemon
+ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
+RemainAfterExit=yes
+Environment=USER=%u
+Environment=HOME=/home/%u
+Environment=TMPDIR=/tmp/%u
+
+[Install]
+WantedBy=default.target
