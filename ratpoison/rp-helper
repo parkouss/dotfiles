@@ -15,7 +15,7 @@ if sys.version_info >= (3,):
     encoding = sys.getdefaultencoding()
 
     def to_string(bytes):
-        return bytes.decode(encoding)
+        return bytes.decode(encoding, "ignore")
 
     def to_bytes(str):
         return str.encode(encoding)
