@@ -1,0 +1,23 @@
+exec setxkbmap fr bepo
+
+escape M-Tab
+
+bind r exec dmenu_run -l 10 -i
+bind w exec rp-helper dmenu-window -- -l 10 -i -p window:
+bind t exec rp-helper run-or-raise -c URxvt -- urxvtc -e tmux attach-session
+bind e exec rp-helper run-or-raise -c Emacs -- emacsclient -c -a ''
+bind c exec rp-helper run-or-raise -c Conkeror -- conkeror
+bind m exec rp-helper trayer
+
+alias update_xmobar exec rp-helper xmobar-echo-window
+
+addhook titlechanged update_xmobar
+addhook switchwin update_xmobar
+addhook switchframe update_xmobar
+addhook switchgroup update_xmobar
+addhook newwindow update_xmobar
+addhook deletewindow update_xmobar
+
+# cycle through frames
+unbind Tab
+bind o focus

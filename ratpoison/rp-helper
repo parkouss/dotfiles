@@ -1,0 +1,173 @@
+#!/usr/bin/env python
+
+import argparse
+import os
+import sys
+import signal
+import time
+import subprocess
+import tempfile
+
+XMOBAR_FIFO = '/tmp/xmobar_windows'
+
+
+if sys.version_info >= (3,):
+    encoding = sys.getdefaultencoding()
+
+    def to_string(bytes):
+        return bytes.decode(encoding)
+
+    def to_bytes(str):
+        return str.encode(encoding)
+else:
+    def to_string(bytes):
+        return bytes
+    to_bytes = to_string
+
+
+def rat_command(cmd):
+    return to_string(subprocess.Popen(
+        ["ratpoison", "-c", cmd], stdout=subprocess.PIPE,).communicate()[0])
+
+
+def rat_windows(fmt, split_line=lambda s: (s,)):
+    return [
+        tuple(split_line(line.rstrip()))
+        for line in rat_command("windows %s" % fmt).splitlines()]
+
+
+def run_or_raise(opts):
+    win_classes = rat_windows("%n %c", lambda s: s.split(" ", 1))
+
+    for num, klass in win_classes:
+        if klass == opts.resource_class:
+            rat_command("select %s" % num)
+            return
+
+    os.execvpe(opts.prog[0], opts.prog, os.environ)
+
+
+def dmenu_window(opts):
+    win_classes = rat_windows("%n %c %t", lambda s: s.split(" ", 1))
+    out = subprocess.Popen(["dmenu"] + opts.dmenu_args or [],
+                           stdin=subprocess.PIPE, stdout=subprocess.PIPE) \
+                    .communicate(to_bytes('\n'.join(f[1]
+                                                    for f in win_classes)))[0]
+
+    if not out:
+        return
+    out = to_string(out.rstrip())
+
+    for num, text in win_classes:
+        if text == out:
+            rat_command("select %s" % num)
+            return
+
+
+def trayer(opts):
+    pidfile = os.path.join(tempfile.gettempdir(), "rp-helper.pid")
+    if os.path.isfile(pidfile):
+        with open(pidfile) as f:
+            pid = int(f.read())
+        try:
+            os.kill(pid, signal.SIGTERM)
+        finally:
+            os.unlink(pidfile)
+            return
+
+    procs = []
+
+    def cleanup(signum, frame):
+        rat_command("set padding 0 0 0 0")
+        if os.path.isfile(pidfile):
+            os.unlink(pidfile)
+        if os.path.exists(XMOBAR_FIFO):
+            os.unlink(XMOBAR_FIFO)
+        for proc in procs:
+            try:
+                if proc.poll() is None:
+                    proc.send_signal(signum)
+                    proc.wait()
+            except:
+                pass
+    signal.signal(signal.SIGINT, cleanup)
+    signal.signal(signal.SIGTERM, cleanup)
+    with open(pidfile, "w") as f:
+        f.write("%s" % os.getpid())
+
+    if not os.path.exists(XMOBAR_FIFO):
+        os.mkfifo(XMOBAR_FIFO)
+
+    unmanaged = rat_command("unmanage").split("\n")
+    rat_command("unmanage panel")
+    rat_command("set padding 0 20 0 0")
+    trayer = subprocess.Popen(
+        ["trayer", "--edge", "top", "--align", "right", "--SetDockType",
+         "true", "--expand", "true", "--width", "10", "--transparent",
+         "true", "--height", "20", "--SetPartialStrut", "true",
+         "--tint", "0x191970"])
+    procs.append(trayer)
+    procs.append(subprocess.Popen(["nm-applet"]))
+    procs.append(subprocess.Popen(["xmobar"]))
+    try:
+        time.sleep(1)
+    finally:
+        rat_command("clrunmanaged")
+        for u in unmanaged:
+            if u:
+                rat_command("unmanage %s" % u)
+
+    while trayer.poll() is None:
+        time.sleep(0.1)
+
+    cleanup(signal.SIGTERM, None)
+
+
+def xmobar_echo_window(opts):
+    if not os.path.exists(XMOBAR_FIFO):
+        return
+
+    win_classes = rat_windows("%s " + opts.fmt, lambda s: s.split(" ", 1))
+    text = None
+    for status, wtext in win_classes:
+        if status == "*":
+            text = wtext
+            break
+
+    if text is None:  # no current window
+        return
+
+    with open(XMOBAR_FIFO, "w") as f:
+        f.write("%s\n" % text)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    sp = parser.add_subparsers()
+
+    p_run_or_raise = sp.add_parser('run-or-raise')
+    p_run_or_raise.add_argument("-c", "--resource-class", required=True)
+    p_run_or_raise.add_argument("prog", nargs="+")
+    p_run_or_raise.set_defaults(func=run_or_raise)
+
+    p_select_window = sp.add_parser('dmenu-window')
+    p_select_window.add_argument("dmenu_args", nargs="+")
+    p_select_window.set_defaults(func=dmenu_window)
+
+    p_trayer = sp.add_parser('trayer')
+    p_trayer.set_defaults(func=trayer)
+
+    p_echo_win = sp.add_parser('xmobar-echo-window')
+    p_echo_win.add_argument("--fmt", default="[%c] %30t")
+    p_echo_win.set_defaults(func=xmobar_echo_window)
+
+    return parser.parse_args()
+
+
+def main():
+    opts = parse_args()
+    opts.func(opts)
+
+
+if __name__ == "__main__":
+    main()
