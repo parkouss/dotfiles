@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import re
 import sys
 import signal
 import time
@@ -25,9 +26,12 @@ else:
     to_bytes = to_string
 
 
-def rat_command(cmd):
+def rat_command(cmd, interactive=False):
+    args = ["ratpoison", "-c", cmd]
+    if interactive:
+        args.append("-i")
     return to_string(subprocess.Popen(
-        ["ratpoison", "-c", cmd], stdout=subprocess.PIPE,).communicate()[0])
+        args, stdout=subprocess.PIPE,).communicate()[0])
 
 
 def rat_windows(fmt, split_line=lambda s: (s,)):
@@ -141,6 +145,32 @@ def xmobar_echo_window(opts):
         f.write("%s\n" % text)
 
 
+def swap_two_frames(opts):
+    frames_txt = rat_command("fdump").rstrip().split(",")
+    if len(frames_txt) != 2:
+        rat_command("swap", interactive=True)
+        return
+
+    current_wid = None
+    for wid, status in rat_windows("%i %s", lambda s: s.split(" ", 1)):
+        if status == "*":
+            current_wid = wid
+            break
+
+    ftxt = ":window %s" % current_wid
+    for i, frame in enumerate(frames_txt):
+        if ftxt in frame:
+            data = re.search(r":number (\d+)", frame)
+            if data:
+                other_frame = frames_txt[0 if i == 1 else 1]
+                data = re.search(r":number (\d+)", other_frame)
+                if data:
+                    rat_command("swap %s" % data.group(1))
+                    return
+
+    rat_command("swap", interactive=True)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     sp = parser.add_subparsers()
@@ -160,6 +190,9 @@ def parse_args():
     p_echo_win = sp.add_parser('xmobar-echo-window')
     p_echo_win.add_argument("--fmt", default="[%c] %30t")
     p_echo_win.set_defaults(func=xmobar_echo_window)
+
+    p_swap_frames = sp.add_parser('swap-two-frames')
+    p_swap_frames.set_defaults(func=swap_two_frames)
 
     return parser.parse_args()
 

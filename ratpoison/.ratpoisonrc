@@ -8,6 +8,7 @@ bind t exec rp-helper run-or-raise -c URxvt -- urxvtc -e tmux attach-session
 bind e exec rp-helper run-or-raise -c Emacs -- emacsclient -c -a ''
 bind c exec rp-helper run-or-raise -c Conkeror -- conkeror
 bind m exec rp-helper trayer
+bind x exec rp-helper swap-two-frames
 
 alias update_xmobar exec rp-helper xmobar-echo-window
 
